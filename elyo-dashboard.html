@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Elyo AI – App Dashboard</title>
+<style>
+:root{
+  --teal:#14b8a6;--teal-l:#5eead4;--teal-d:#0f766e;
+  --blue:#3b82f6;--purple:#8b5cf6;--amber:#f59e0b;--rose:#f43f5e;--green:#10b981;
+  --bg:#030712;--s1:#0f172a;--s2:#1e293b;--s3:#334155;
+  --text:#f8fafc;--t2:#94a3b8;--t3:#64748b;
+  --grad:linear-gradient(135deg,#14b8a6,#3b82f6);
+  --sidebar:220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:14px}
+/* SIDEBAR */
+aside{width:var(--sidebar);background:var(--s1);border-right:1px solid var(--s2);display:flex;flex-direction:column;padding:0;overflow:hidden;flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:20px 18px;border-bottom:1px solid var(--s2)}
+.sb-logo-icon{width:32px;height:32px;background:var(--grad);border-radius:9px;display:grid;place-items:center;font-size:1rem;flex-shrink:0}
+.sb-logo-name{font-weight:800;font-size:1.05rem;letter-spacing:-.02em}
+.sb-ws{margin:12px 10px;background:var(--s2);border-radius:10px;padding:10px 12px;cursor:pointer;transition:background .2s}
+.sb-ws:hover{background:var(--s3)}
+.sb-ws-name{font-weight:600;font-size:.85rem}
+.sb-ws-role{font-size:.72rem;color:var(--t3);margin-top:2px}
+.sb-ws-arrow{margin-left:auto;color:var(--t3)}
+.sb-section{padding:6px 10px 4px;font-size:.68rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;margin:2px 8px;cursor:pointer;color:var(--t2);transition:all .2s;font-size:.88rem;font-weight:500}
+.sb-item:hover{background:var(--s2);color:var(--text)}
+.sb-item.active{background:rgba(20,184,166,.12);color:var(--teal-l)}
+.sb-item-icon{width:18px;text-align:center;font-size:1rem}
+.sb-badge{margin-left:auto;background:var(--teal);color:#fff;font-size:.65rem;font-weight:700;padding:.1rem .45rem;border-radius:50px}
+.sb-footer{margin-top:auto;padding:14px 10px;border-top:1px solid var(--s2)}
+.sb-user{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer;transition:background .2s}
+.sb-user:hover{background:var(--s2)}
+.sb-avatar{width:32px;height:32px;background:var(--grad);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+.sb-user-name{font-size:.85rem;font-weight:600}
+.sb-user-email{font-size:.72rem;color:var(--t3)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+/* TOPBAR */
+.topbar{background:var(--s1);border-bottom:1px solid var(--s2);padding:0 24px;height:58px;display:flex;align-items:center;gap:16px;flex-shrink:0}
+.topbar-title{font-weight:700;font-size:1.05rem}
+.topbar-search{flex:1;max-width:340px;position:relative;margin-left:1.5rem}
+.topbar-search input{width:100%;background:var(--s2);border:1px solid var(--s3);border-radius:10px;padding:.45rem .9rem .45rem 2.2rem;color:var(--text);font-size:.85rem;outline:none;transition:border-color .2s}
+.topbar-search input:focus{border-color:var(--teal-d)}
+.topbar-search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.9rem}
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--s2);border:1px solid var(--s3);display:grid;place-items:center;cursor:pointer;transition:all .2s;position:relative;font-size:1rem}
+.icon-btn:hover{background:var(--s3)}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--teal);border-radius:50%;border:2px solid var(--s1)}
+.topbar-avatar{width:34px;height:34px;background:var(--grad);border-radius:50%;display:grid;place-items:center;font-weight:700;cursor:pointer;font-size:.85rem}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:24px}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:50px}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.page-header h1{font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+.page-header-sub{font-size:.85rem;color:var(--t2);margin-top:3px}
+
+/* MOOD WIDGET */
+.mood-widget{background:linear-gradient(135deg,rgba(20,184,166,.08),rgba(59,130,246,.05));border:1px solid rgba(20,184,166,.2);border-radius:18px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.mood-label{font-size:.85rem;font-weight:600;color:var(--t2);white-space:nowrap}
+.mood-emojis{display:flex;gap:8px}
+.mood-btn{width:40px;height:40px;border-radius:12px;background:var(--s2);border:2px solid transparent;cursor:pointer;font-size:1.3rem;display:grid;place-items:center;transition:all .2s}
+.mood-btn:hover{transform:scale(1.15);background:var(--s3)}
+.mood-btn.selected{border-color:var(--teal);background:rgba(20,184,166,.12)}
+.mood-saved{color:var(--teal-l);font-size:.85rem;font-weight:600}
+.mood-streak{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--amber);font-weight:600}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.col-span2{grid-column:span 2}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--s2);border-radius:18px;padding:20px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-weight:700;font-size:.95rem}
+.card-badge{background:rgba(20,184,166,.12);color:var(--teal-l);font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:50px}
+.card-badge.warning{background:rgba(245,158,11,.12);color:var(--amber)}
+.card-badge.purple{background:rgba(139,92,246,.12);color:#c4b5fd}
+
+/* STAT CARDS */
+.stat-card{background:var(--s1);border:1px solid var(--s2);border-radius:18px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s}
+.stat-card:hover{border-color:var(--s3)}
+.stat-card-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;margin-bottom:12px}
+.stat-card-val{font-size:1.9rem;font-weight:800;letter-spacing:-.03em}
+.stat-card-label{font-size:.8rem;color:var(--t2);margin-top:4px}
+.stat-card-delta{font-size:.75rem;font-weight:600;margin-top:8px}
+.delta-up{color:var(--green)}
+.delta-down{color:var(--rose)}
+.stat-card-glow{position:absolute;bottom:-30px;right:-30px;width:100px;height:100px;border-radius:50%;filter:blur(40px);opacity:.35}
+
+/* FOCUS LIST */
+.focus-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--s2)}
+.focus-item:last-child{border:none}
+.focus-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.focus-text{font-size:.88rem;font-weight:500;flex:1}
+.focus-meta{font-size:.75rem;color:var(--t3)}
+.focus-chip{font-size:.72rem;font-weight:600;padding:.15rem .5rem;border-radius:6px}
+.chip-urgent{background:rgba(244,63,94,.12);color:#fb7185}
+.chip-medium{background:rgba(245,158,11,.12);color:var(--amber)}
+.chip-low{background:rgba(16,185,129,.12);color:#34d399}
+
+/* AUTOMATION FEED */
+.auto-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--s2);cursor:pointer}
+.auto-item:last-child{border:none}
+.auto-item:hover .auto-accept{opacity:1}
+.auto-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:1.1rem;flex-shrink:0}
+.auto-title{font-size:.87rem;font-weight:600;margin-bottom:2px}
+.auto-desc{font-size:.78rem;color:var(--t2)}
+.auto-actions{margin-left:auto;display:flex;gap:6px;align-items:flex-start;flex-shrink:0}
+.auto-accept{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:.25rem .7rem;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;opacity:.7}
+.auto-accept:hover{background:var(--teal-l);opacity:1}
+.auto-dismiss{background:var(--s2);color:var(--t3);border:none;border-radius:8px;padding:.25rem .6rem;font-size:.75rem;cursor:pointer;transition:background .2s}
+.auto-dismiss:hover{background:var(--s3)}
+
+/* EVENTS */
+.event-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--s2)}
+.event-item:last-child{border:none}
+.event-time-col{width:64px;flex-shrink:0;text-align:right}
+.event-time{font-size:.78rem;font-weight:600;color:var(--teal-l)}
+.event-dur{font-size:.7rem;color:var(--t3)}
+.event-dot-line{display:flex;flex-direction:column;align-items:center;padding:0 8px}
+.event-dot2{width:9px;height:9px;border-radius:50%;background:var(--teal);margin-top:3px;flex-shrink:0}
+.event-line{width:2px;flex:1;background:var(--s2);margin-top:4px}
+.event-title{font-size:.88rem;font-weight:600}
+.event-subtitle{font-size:.75rem;color:var(--t3);margin-top:2px}
+
+/* ACTIVITY */
+.act-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--s2)}
+.act-item:last-child{border:none}
+.act-icon{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:.85rem;flex-shrink:0}
+.act-text{font-size:.82rem;flex:1}
+.act-text strong{color:var(--text)}
+.act-time{font-size:.72rem;color:var(--t3);white-space:nowrap}
+
+/* CHARTS */
+.mini-chart{display:flex;align-items:flex-end;gap:4px;height:60px;margin-top:8px}
+.bar{flex:1;border-radius:4px 4px 0 0;background:rgba(20,184,166,.25);transition:background .2s;cursor:pointer;position:relative;min-width:10px}
+.bar:hover{background:var(--teal)}
+.bar.today{background:rgba(20,184,166,.6)}
+
+/* ACHIEVEMENTS */
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ach-item{background:var(--s2);border:1px solid var(--s3);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center}
+.ach-icon{font-size:1.4rem;flex-shrink:0}
+.ach-name{font-size:.82rem;font-weight:700;margin-bottom:3px}
+.ach-prog{width:100%;height:5px;background:var(--s3);border-radius:50px;overflow:hidden}
+.ach-prog-bar{height:100%;background:var(--grad);border-radius:50px;transition:width .6s}
+.ach-prog-text{font-size:.7rem;color:var(--t3);margin-top:3px}
+.ach-earned{font-size:.7rem;color:var(--teal-l);font-weight:600;margin-top:2px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--s2);border-radius:12px;padding:4px;margin-bottom:20px}
+.tab{padding:.45rem .9rem;border-radius:9px;font-size:.83rem;font-weight:600;cursor:pointer;color:var(--t2);transition:all .2s;border:none;background:none}
+.tab.active{background:var(--s1);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+
+/* AGENT CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:360px}
+.chat-messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px}
+.msg{display:flex;gap:10px}
+.msg.user{flex-direction:row-reverse}
+.m-avatar{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:.8rem;flex-shrink:0}
+.msg.ai .m-avatar{background:var(--grad)}
+.msg.user .m-avatar{background:var(--s2);border:1px solid var(--s3)}
+.m-bubble{background:var(--s2);border:1px solid var(--s3);border-radius:12px;padding:.65rem .9rem;font-size:.84rem;line-height:1.6;max-width:85%}
+.msg.user .m-bubble{background:rgba(20,184,166,.08);border-color:rgba(20,184,166,.2)}
+.tool-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:6px;padding:.15rem .5rem;font-size:.72rem;font-family:monospace;color:#93c5fd;margin-top:4px;margin-right:4px}
+.chat-input-row{display:flex;gap:8px;margin-top:12px;flex-shrink:0}
+.chat-in{flex:1;background:var(--s2);border:1px solid var(--s3);border-radius:11px;padding:.55rem .9rem;color:var(--text);font-size:.84rem;outline:none}
+.chat-in:focus{border-color:var(--teal-d)}
+.send-btn{background:var(--teal);border:none;border-radius:11px;padding:.5rem 1rem;color:#fff;font-weight:600;cursor:pointer;font-size:.84rem;transition:background .2s}
+.send-btn:hover{background:var(--teal-l)}
+
+/* WORKFLOW BUILDER */
+.wf-wrap{display:flex;gap:16px;height:400px}
+.wf-panel-left{width:160px;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+.wf-panel-label{font-size:.7rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.wf-drag-node{background:var(--s2);border:1px solid var(--s3);border-radius:10px;padding:.55rem .8rem;font-size:.78rem;font-weight:600;cursor:grab;display:flex;align-items:center;gap:6px;transition:all .2s}
+.wf-drag-node:hover{border-color:var(--teal-d);background:rgba(20,184,166,.06)}
+.wf-canvas-wrap{flex:1;background:var(--bg);border:1px solid var(--s3);border-radius:16px;overflow:auto;position:relative}
+.wf-canvas{min-width:600px;min-height:350px;position:relative;padding:20px}
+.wf-node-placed{position:absolute;background:var(--s1);border:2px solid var(--s3);border-radius:13px;padding:.65rem .9rem;font-size:.8rem;font-weight:600;cursor:pointer;min-width:110px;text-align:center;transition:all .2s;user-select:none}
+.wf-node-placed:hover,.wf-node-placed.sel{border-color:var(--teal);box-shadow:0 0 0 3px rgba(20,184,166,.1)}
+.wf-node-type{font-size:.65rem;color:var(--t3);text-transform:uppercase;font-weight:500;margin-bottom:2px}
+svg.wf-svg{position:absolute;top:0;left:0;pointer-events:none}
+.wf-panel-right{width:180px;flex-shrink:0;background:var(--s2);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.inspector-label{font-size:.7rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+.inspector-val{font-size:.82rem;font-weight:600;margin-top:2px;margin-bottom:8px}
+.inspector-input{width:100%;background:var(--s1);border:1px solid var(--s3);border-radius:8px;padding:.4rem .6rem;color:var(--text);font-size:.78rem;outline:none;margin-top:4px}
+.sim-run-btn{margin-top:auto;background:var(--teal);border:none;border-radius:9px;padding:.5rem;color:#fff;font-weight:700;font-size:.8rem;cursor:pointer;width:100%;transition:background .2s}
+.sim-run-btn:hover{background:var(--teal-l)}
+.sim-result{margin-top:6px;background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.15);border-radius:8px;padding:.6rem;font-size:.75rem;display:none}
+.sim-result.show{display:block}
+
+/* ANALYTICS */
+.analytics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.chart-row{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.chart-card{background:var(--s1);border:1px solid var(--s2);border-radius:18px;padding:20px}
+.chart-title{font-weight:700;margin-bottom:4px}
+.chart-sub{font-size:.78rem;color:var(--t2);margin-bottom:16px}
+.line-chart{height:140px;position:relative}
+svg text{font-family:'Inter',sans-serif}
+
+/* TEAM */
+.member-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--s2)}
+.member-row:last-child{border:none}
+.member-av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.9rem;flex-shrink:0}
+.member-name{font-weight:600;font-size:.9rem}
+.member-role{font-size:.75rem;color:var(--t3);margin-top:1px}
+.member-skills{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.skill-tag{background:var(--s3);border-radius:6px;padding:.1rem .45rem;font-size:.7rem;color:var(--t2)}
+.workload-bar-wrap{flex:1;max-width:120px}
+.workload-label{font-size:.7rem;color:var(--t3);margin-bottom:3px}
+.workload-bar{height:6px;background:var(--s3);border-radius:50px;overflow:hidden}
+.wb-fill{height:100%;border-radius:50px;transition:width .4s}
+.wb-low{background:var(--green)}
+.wb-med{background:var(--amber)}
+.wb-high{background:var(--rose)}
+.route-btn{background:var(--s2);border:1px solid var(--s3);border-radius:9px;padding:.3rem .7rem;font-size:.75rem;font-weight:600;color:var(--t2);cursor:pointer;transition:all .2s}
+.route-btn:hover{border-color:var(--teal);color:var(--teal-l)}
+
+/* ACHIEVEMENTS PAGE */
+.ach-page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.ach-big{background:var(--s1);border:1px solid var(--s2);border-radius:18px;padding:22px;text-align:center;transition:all .2s}
+.ach-big:hover{border-color:var(--s3)}
+.ach-big.earned{border-color:var(--teal-d);background:rgba(20,184,166,.04)}
+.ach-big-icon{font-size:2.5rem;margin-bottom:10px}
+.ach-big-name{font-weight:700;margin-bottom:4px}
+.ach-big-desc{font-size:.8rem;color:var(--t2);margin-bottom:12px}
+.ach-big-bar{height:6px;background:var(--s2);border-radius:50px;overflow:hidden;margin-bottom:6px}
+.ach-big-fill{height:100%;background:var(--grad);border-radius:50px}
+.ach-big-pct{font-size:.75rem;color:var(--t3)}
+.ach-big .ach-earned-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(20,184,166,.12);color:var(--teal-l);font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:50px}
+
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:200px 1fr;gap:20px}
+.settings-nav a{display:flex;align-items:center;gap:8px;padding:.55rem .9rem;border-radius:10px;color:var(--t2);font-size:.87rem;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:2px;text-decoration:none}
+.settings-nav a:hover,.settings-nav a.active{background:var(--s2);color:var(--text)}
+.settings-section{background:var(--s1);border:1px solid var(--s2);border-radius:18px;padding:28px;margin-bottom:16px}
+.settings-section h3{font-weight:700;font-size:1rem;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--s2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:.8rem;font-weight:600;color:var(--t2)}
+.form-input{background:var(--s2);border:1px solid var(--s3);border-radius:10px;padding:.55rem .85rem;color:var(--text);font-size:.87rem;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--teal-d)}
+.form-select{background:var(--s2);border:1px solid var(--s3);border-radius:10px;padding:.55rem .85rem;color:var(--text);font-size:.87rem;outline:none}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;border-bottom:1px solid var(--s2)}
+.toggle-row:last-child{border:none}
+.toggle-info h4{font-size:.88rem;font-weight:600}
+.toggle-info p{font-size:.78rem;color:var(--t2);margin-top:2px}
+.toggle{width:42px;height:24px;background:var(--s3);border-radius:50px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--teal)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle.on::after{transform:translateX(18px)}
+.save-btn{background:var(--teal);border:none;border-radius:11px;padding:.6rem 1.6rem;color:#fff;font-weight:600;font-size:.87rem;cursor:pointer;transition:background .2s}
+.save-btn:hover{background:var(--teal-l)}
+
+/* ONBOARDING */
+.int-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.int-card{background:var(--s1);border:1px solid var(--s2);border-radius:18px;padding:22px;display:flex;align-items:center;gap:16px;transition:all .2s}
+.int-card:hover{border-color:var(--s3)}
+.int-logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:1.6rem;flex-shrink:0}
+.int-name{font-weight:700;font-size:.95rem;margin-bottom:3px}
+.int-desc{font-size:.78rem;color:var(--t2)}
+.int-status{font-size:.75rem;font-weight:600;margin-top:6px}
+.int-status.connected{color:var(--green)}
+.int-status.mock{color:var(--amber)}
+.int-status.disconnected{color:var(--t3)}
+.int-connect-btn{margin-left:auto;flex-shrink:0}
+.conn-btn{padding:.4rem .9rem;border-radius:9px;font-size:.78rem;font-weight:600;cursor:pointer;border:1px solid;transition:all .2s}
+.conn-btn.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.conn-btn.active:hover{background:var(--teal-l)}
+.conn-btn.pending{background:var(--s2);color:var(--t2);border-color:var(--s3)}
+.conn-btn.pending:hover{border-color:var(--teal-d);color:var(--teal-l)}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-content{animation:fadeIn .25s ease}
+.typing{display:flex;gap:4px;align-items:center;padding:.5rem .8rem}
+.typing span{width:7px;height:7px;background:var(--t3);border-radius:50%;animation:blink 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside>
+  <div class="sb-logo">
+    <div class="sb-logo-icon">⚡</div>
+    <span class="sb-logo-name">Elyo AI</span>
+  </div>
+  <div class="sb-ws" onclick="/* ws switcher */">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:24px;height:24px;background:var(--grad);border-radius:6px;display:grid;place-items:center;font-size:.7rem;font-weight:700">M</div>
+      <div>
+        <div class="sb-ws-name">My Workspace</div>
+        <div class="sb-ws-role">Owner</div>
+      </div>
+      <span class="sb-ws-arrow" style="margin-left:auto">⌄</span>
+    </div>
+  </div>
+
+  <div class="sb-section">Main</div>
+  <div class="sb-item active" onclick="showPage('dashboard',this)"><span class="sb-item-icon">🏠</span> Dashboard</div>
+  <div class="sb-item" onclick="showPage('agent',this)"><span class="sb-item-icon">🤖</span> Agent <span class="sb-badge">3</span></div>
+  <div class="sb-item" onclick="showPage('workflows',this)"><span class="sb-item-icon">🔧</span> Workflows</div>
+  <div class="sb-item" onclick="showPage('analytics',this)"><span class="sb-item-icon">📊</span> Analytics</div>
+
+  <div class="sb-section">Team</div>
+  <div class="sb-item" onclick="showPage('team',this)"><span class="sb-item-icon">👥</span> Team</div>
+  <div class="sb-item" onclick="showPage('achievements',this)"><span class="sb-item-icon">🏆</span> Achievements</div>
+  <div class="sb-item" onclick="showPage('onboarding',this)"><span class="sb-item-icon">🔗</span> Integrations</div>
+
+  <div class="sb-section">Account</div>
+  <div class="sb-item" onclick="showPage('settings',this)"><span class="sb-item-icon">⚙️</span> Settings</div>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">A</div>
+      <div>
+        <div class="sb-user-name">Alex Kim</div>
+        <div class="sb-user-email">alex@myworkspace.io</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-search">
+      <span class="topbar-search-icon">🔍</span>
+      <input placeholder="Search workflows, conversations…"/>
+    </div>
+    <div class="topbar-actions">
+      <div class="icon-btn" title="Notifications">🔔<div class="notif-dot"></div></div>
+      <div class="icon-btn" title="Help">❓</div>
+      <div class="topbar-avatar">A</div>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+    <!-- Pages rendered by JS -->
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+let moodSelected = null;
+let moodSaved = false;
+let currentPage = 'dashboard';
+let chatHistory = [
+  {role:'ai', text:'Hi Alex! Your energy score is <strong>4/5</strong> today — great momentum. You have <strong>3 meetings</strong> this afternoon and <strong>2 unread priority threads</strong>. Want me to prep follow-up drafts?', tools:[]}
+];
+let chatReplies = [
+  {text:"I've checked your calendar — you have a <strong>3pm Product Review</strong> with 4 external attendees. I'll draft a follow-up email. Should I also create a Notion summary page?", tools:['calendar.getEvents']},
+  {text:"Done! Follow-up drafted for all 4 attendees and Notion page created. I've saved this as a reusable <strong>Meeting Follow-up</strong> workflow. You saved ~14 minutes!", tools:['gmail.sendEmail','notion.createPage','workflow.runSimulation']},
+  {text:"I can see 2 priority threads: <em>Q2 Planning</em> and <em>Invoice #1042</em>. Want me to summarise and suggest actions?", tools:['gmail.getThreads']},
+  {text:"Workflow created and activated! I'll run it automatically after your next meeting with external attendees.", tools:['workflow.runSimulation']},
+];
+let chatIdx = 0;
+let selectedNode = null;
+let integrations = {
+  google: 'connected_mock',
+  slack: 'disconnected',
+  notion: 'disconnected',
+  teams: 'disconnected',
+};
+let toggles = {email:true,slack:false,weekly:true,mood:true};
+
+// ── ROUTING ────────────────────────────────────────────────────────────────
+function showPage(name, el) {
+  currentPage = name;
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const titles = {
+    dashboard:'Dashboard', agent:'Agent Console', workflows:'Visual Workflow Builder',
+    analytics:'ROI Analytics', team:'Team', achievements:'Achievements',
+    onboarding:'Integrations', settings:'Settings'
+  };
+  document.getElementById('topbarTitle').textContent = titles[name]||name;
+  const c = document.getElementById('content');
+  c.innerHTML = pages[name]();
+  c.scrollTop = 0;
+  if(name==='analytics') initCharts();
+  if(name==='workflows') initWorkflowBuilder();
+  if(name==='achievements') initAchievements();
+}
+
+// ── PAGES ─────────────────────────────────────────────────────────────────
+const pages = {
+
+dashboard: ()=>`
+<div class="page-content">
+  <div class="page-header">
+    <div>
+      <h1>Good morning, Alex 👋</h1>
+      <div class="page-header-sub">Tuesday, 3 March 2026 · My Workspace</div>
+    </div>
+    <button class="save-btn" onclick="showPage('agent',null)">+ Ask Agent</button>
+  </div>
+
+  ${moodWidget()}
+
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(20,184,166,.12)">⏱️</div>
+      <div class="stat-card-val">4.2h</div>
+      <div class="stat-card-label">Time Saved This Week</div>
+      <div class="stat-card-delta delta-up">↑ 18% vs last week</div>
+      <div class="stat-card-glow" style="background:var(--teal)"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(59,130,246,.12)">⚡</div>
+      <div class="stat-card-val">23</div>
+      <div class="stat-card-label">Automations Run</div>
+      <div class="stat-card-delta delta-up">↑ 4 today</div>
+      <div class="stat-card-glow" style="background:var(--blue)"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(16,185,129,.12)">💰</div>
+      <div class="stat-card-val">$315</div>
+      <div class="stat-card-label">Value Recovered</div>
+      <div class="stat-card-delta delta-up">↑ $42 today</div>
+      <div class="stat-card-glow" style="background:var(--green)"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(245,158,11,.12)">🔥</div>
+      <div class="stat-card-val">5</div>
+      <div class="stat-card-label">Day Check-in Streak</div>
+      <div class="stat-card-delta" style="color:var(--amber)">Keep it up!</div>
+      <div class="stat-card-glow" style="background:var(--amber)"></div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Today's Focus</div>
+        <span class="card-badge warning">3 tasks</span>
+      </div>
+      <div class="focus-item"><div class="focus-dot" style="background:var(--rose)"></div><div class="focus-text">Respond to Q2 Planning thread</div><span class="focus-chip chip-urgent">Urgent</span></div>
+      <div class="focus-item"><div class="focus-dot" style="background:var(--amber)"></div><div class="focus-text">Review Product Roadmap doc</div><span class="focus-chip chip-medium">Medium</span></div>
+      <div class="focus-item"><div class="focus-dot" style="background:var(--green)"></div><div class="focus-text">Send invoice follow-up email</div><span class="focus-chip chip-low">Low</span></div>
+      <div class="focus-item"><div class="focus-dot" style="background:var(--teal)"></div><div class="focus-text">3pm Product Review (4 attendees)</div><span class="focus-chip chip-medium">Meeting</span></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Upcoming Events</div>
+        <span class="card-badge">4 today</span>
+      </div>
+      <div class="event-item">
+        <div class="event-time-col"><div class="event-time">10:00</div><div class="event-dur">30m</div></div>
+        <div class="event-dot-line"><div class="event-dot2"></div><div class="event-line"></div></div>
+        <div><div class="event-title">Team Standup</div><div class="event-subtitle">Slack · 5 attendees</div></div>
+      </div>
+      <div class="event-item">
+        <div class="event-time-col"><div class="event-time">14:00</div><div class="event-dur">60m</div></div>
+        <div class="event-dot-line"><div class="event-dot2" style="background:var(--blue)"></div><div class="event-line"></div></div>
+        <div><div class="event-title">1:1 with Maria</div><div class="event-subtitle">Google Meet</div></div>
+      </div>
+      <div class="event-item">
+        <div class="event-time-col"><div class="event-time">15:00</div><div class="event-dur">90m</div></div>
+        <div class="event-dot-line"><div class="event-dot2" style="background:var(--purple)"></div><div class="event-line"></div></div>
+        <div><div class="event-title">Product Review</div><div class="event-subtitle">4 external attendees · <span style="color:var(--teal-l)">Follow-up ready</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">💡 Suggested Automations</div>
+        <span class="card-badge purple">Predictive</span>
+      </div>
+      <div class="auto-item">
+        <div class="auto-icon" style="background:rgba(20,184,166,.1)">📧</div>
+        <div><div class="auto-title">Meeting Follow-up</div><div class="auto-desc">You've had 3 meetings without follow-up this week. Auto-draft summaries?</div></div>
+        <div class="auto-actions"><button class="auto-accept" onclick="this.textContent='✓';this.disabled=true">Accept</button><button class="auto-dismiss">✕</button></div>
+      </div>
+      <div class="auto-item">
+        <div class="auto-icon" style="background:rgba(59,130,246,.1)">📋</div>
+        <div><div class="auto-title">Invoice Triage</div><div class="auto-desc">Pattern: invoice emails → Slack #finance. Set it up automatically?</div></div>
+        <div class="auto-actions"><button class="auto-accept" onclick="this.textContent='✓';this.disabled=true">Accept</button><button class="auto-dismiss">✕</button></div>
+      </div>
+      <div class="auto-item">
+        <div class="auto-icon" style="background:rgba(139,92,246,.1)">📝</div>
+        <div><div class="auto-title">Weekly Report Draft</div><div class="auto-desc">Every Friday, compile Notion activity into a team digest?</div></div>
+        <div class="auto-actions"><button class="auto-accept" onclick="this.textContent='✓';this.disabled=true">Accept</button><button class="auto-dismiss">✕</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Recent Activity</div>
+      </div>
+      <div class="act-item">
+        <div class="act-icon" style="background:rgba(20,184,166,.1)">⚡</div>
+        <div class="act-text"><strong>Meeting Follow-up</strong> ran successfully · Saved 14 min</div>
+        <div class="act-time">12m ago</div>
+      </div>
+      <div class="act-item">
+        <div class="act-icon" style="background:rgba(59,130,246,.1)">📧</div>
+        <div class="act-text"><strong>Gmail</strong> thread read · Q2 Planning</div>
+        <div class="act-time">38m ago</div>
+      </div>
+      <div class="act-item">
+        <div class="act-icon" style="background:rgba(139,92,246,.1)">📝</div>
+        <div class="act-text"><strong>Notion page</strong> created · Standup Notes</div>
+        <div class="act-time">2h ago</div>
+      </div>
+      <div class="act-item">
+        <div class="act-icon" style="background:rgba(245,158,11,.1)">🏆</div>
+        <div class="act-text"><strong>Achievement unlocked</strong> · 1 Hour Saved</div>
+        <div class="act-time">Yesterday</div>
+      </div>
+      <div class="act-item">
+        <div class="act-icon" style="background:rgba(16,185,129,.1)">💬</div>
+        <div class="act-text"><strong>Slack</strong> message posted to #finance</div>
+        <div class="act-time">Yesterday</div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="card-title" style="font-size:.82rem;margin-bottom:8px;color:var(--t2)">This week</div>
+        <div class="mini-chart">
+          ${[30,45,20,60,50,80,55].map((h,i)=>`<div class="bar ${i===6?'today':''}" style="height:${h}%" title="${h}% capacity"></div>`).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--t3);margin-top:4px">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Today</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`,
+
+agent: ()=>`
+<div class="page-content">
+  <div class="page-header">
+    <div><h1>Agent Console</h1><div class="page-header-sub">Elyo understands context — ask anything about your workflow.</div></div>
+    <button class="save-btn" onclick="startNewConv()">+ New Conversation</button>
+  </div>
+  <div class="grid2" style="align-items:start">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--s2);display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:700">Conversations</div>
+        <span class="card-badge">3</span>
+      </div>
+      ${['Meeting follow-up setup','Inbox triage help','Weekly report builder'].map((t,i)=>`
+      <div style="padding:12px 18px;border-bottom:1px solid var(--s2);cursor:pointer;background:${i===0?'rgba(20,184,166,.05)':'transparent'};transition:background .2s" onmouseover="this.style.background='rgba(20,184,166,.04)'" onmouseout="this.style.background='${i===0?'rgba(20,184,166,.05)':'transparent'}'">
+        <div style="font-size:.87rem;font-weight:600">${t}</div>
+        <div style="font-size:.74rem;color:var(--t3);margin-top:2px">${['2 hours ago','Yesterday','2 days ago'][i]}</div>
+      </div>`).join('')}
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;height:500px;padding:0;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--s2);display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-weight:700">Meeting follow-up setup</div><div style="font-size:.74px;color:var(--t3);font-size:.74rem">Started 2 hours ago</div></div>
+        <div style="display:flex;gap:4px">
+          <span class="tool-tag">🧠 Mood: 4/5</span>
+          <span class="tool-tag">🔗 Google connected</span>
+        </div>
+      </div>
+      <div class="chat-messages" id="agentMsgs" style="flex:1;padding:16px;gap:12px;display:flex;flex-direction:column;overflow-y:auto">
+        ${chatHistory.map(m=>renderMsg(m)).join('')}
+      </div>
+      <div style="padding:12px 16px;border-top:1px solid var(--s2)">
+        <div class="chat-input-row">
+          <input class="chat-in" id="agentInput" placeholder="Ask Elyo to build a workflow, fetch data, summarise emails…" onkeydown="if(event.key==='Enter')agentSend()"/>
+          <button class="send-btn" onclick="agentSend()">Send →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`,
+
+workflows: ()=>`
+<div class="page-content">
+  <div class="page-header">
+    <div><h1>Workflows</h1><div class="page-header-sub">Build, test, and automate your processes.</div></div>
+    <button class="save-btn" onclick="openBuilder()">+ New Workflow</button>
+  </div>
+  <div id="wf-list">
+    <div class="grid2">
+      ${[
+        {name:'Meeting Follow-up',status:'active',runs:47,saved:'11.2h',trigger:'Calendar Event Ended',last:'12m ago'},
+        {name:'Inbox Triage',status:'active',runs:32,saved:'7.8h',trigger:'Email Received',last:'1h ago'},
+        {name:'Weekly Report',status:'paused',runs:8,saved:'2.1h',trigger:'Schedule: Every Friday',last:'3 days ago'},
+      ].map(w=>`
+      <div class="card" style="cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--s3)'" onmouseout="this.style.borderColor='var(--s2)'" onclick="openBuilder()">
+        <div class="card-header">
+          <div class="card-title">${w.name}</div>
+          <span class="card-badge ${w.status==='active'?'':'warning'}">${w.status==='active'?'● Active':'⏸ Paused'}</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--t3);margin-bottom:12px">Trigger: ${w.trigger}</div>
+        <div class="grid3" style="gap:8px;margin-bottom:14px">
+          <div style="background:var(--s2);border-radius:9px;padding:.5rem .7rem;text-align:center">
+            <div style="font-weight:700;font-size:1rem">${w.runs}</div>
+            <div style="font-size:.7rem;color:var(--t3)">Runs</div>
+          </div>
+          <div style="background:var(--s2);border-radius:9px;padding:.5rem .7rem;text-align:center">
+            <div style="font-weight:700;font-size:1rem;color:var(--teal-l)">${w.saved}</div>
+            <div style="font-size:.7rem;color:var(--t3)">Saved</div>
+          </div>
+          <div style="background:var(--s2);border-radius:9px;padding:.5rem .7rem;text-align:center">
+            <div style="font-weight:700;font-size:1rem">94%</div>
+            <div style="font-size:.7rem;color:var(--t3)">Success</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.74rem;color:var(--t3)">Last run ${w.last}</span>
+          <div style="display:flex;gap:6px">
+            <button class="route-btn" onclick="event.stopPropagation()">Edit</button>
+            <button class="route-btn" onclick="event.stopPropagation()">Run</button>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div id="wf-builder" style="display:none;margin-top:20px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <button class="route-btn" onclick="closeBuilder()">← Back</button>
+      <span style="font-weight:700">New Workflow</span>
+      <input class="form-input" style="max-width:240px;padding:.4rem .7rem" value="Untitled Workflow" id="wfName"/>
+      <button class="save-btn" style="margin-left:auto">Save Workflow</button>
+    </div>
+    <div class="wf-wrap" id="wfWrap"></div>
+    <div id="wfSimResult" class="sim-result" style="margin-top:12px"></div>
+  </div>
+</div>`,
+
+analytics: ()=>`
+<div class="page-content">
+  <div class="page-header">
+    <div><h1>ROI Analytics</h1><div class="page-header-sub">Measure the real impact of automation on your team.</div></div>
+    <div class="tabs" style="margin:0">
+      <button class="tab active">This Week</button>
+      <button class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">This Month</button>
+      <button class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">All Time</button>
+    </div>
+  </div>
+  <div class="analytics-grid">
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(20,184,166,.12)">⏱️</div>
+      <div class="stat-card-val">4.2h</div>
+      <div class="stat-card-label">Hours Saved</div>
+      <div class="stat-card-delta delta-up">↑ 18% this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(59,130,246,.12)">💰</div>
+      <div class="stat-card-val">$315</div>
+      <div class="stat-card-label">Value Recovered</div>
+      <div class="stat-card-delta delta-up">@ $75/hr rate</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(16,185,129,.12)">✅</div>
+      <div class="stat-card-val">94%</div>
+      <div class="stat-card-label">Success Rate</div>
+      <div class="stat-card-delta delta-up">23 / 24 runs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(139,92,246,.12)">🔁</div>
+      <div class="stat-card-val">23</div>
+      <div class="stat-card-label">Total Runs</div>
+      <div class="stat-card-delta delta-up">↑ 4 today</div>
+    </div>
+  </div>
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-title">Hours Saved Per Day</div>
+      <div class="chart-sub">Cumulative automation savings this week</div>
+      <div class="line-chart"><svg id="lineChart" width="100%" height="140"></svg></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">By Workflow</div>
+      <div class="chart-sub">Time saved breakdown</div>
+      <div id="barChart" style="margin-top:8px">
+        ${[
+          {name:'Meeting Follow-up',val:11.2,pct:70},
+          {name:'Inbox Triage',val:7.8,pct:49},
+          {name:'Weekly Report',val:2.1,pct:13},
+        ].map(w=>`
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">
+            <span>${w.name}</span><span style="font-weight:600;color:var(--teal-l)">${w.val}h</span>
+          </div>
+          <div style="height:8px;background:var(--s2);border-radius:50px;overflow:hidden">
+            <div style="height:100%;width:${w.pct}%;background:var(--grad);border-radius:50px;transition:width .8s"></div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>`,
+
+team: ()=>`
+<div class="page-content">
+  <div class="page-header">
+    <div><h1>Team</h1><div class="page-header-sub">My Workspace · 3 members</div></div>
+    <button class="save-btn">+ Invite Member</button>
+  </div>
+  <div class="grid2" style="align-items:start">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Members</div><span class="card-badge">3</span></div>
+      ${[
+        {name:'Alex Kim',role:'Owner',skills:['planning','writing','strategy'],load:40,color:'#14b8a6'},
+        {name:'Maria Santos',role:'Admin',skills:['design','notion','research'],load:75,color:'#3b82f6'},
+        {name:'James Liu',role:'Member',skills:['dev','slack','github'],load:25,color:'#8b5cf6'},
+      ].map(m=>`
+      <div class="member-row">
+        <div class="member-av" style="background:${m.color}20;color:${m.color}">${m.name[0]}</div>
+        <div style="flex:1">
+          <div class="member-name">${m.name}</div>
+          <div class="member-role">${m.role}</div>
+          <div class="member-skills">${m.skills.map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>
+        </div>
+        <div class="workload-bar-wrap">
+          <div class="workload-label">Workload ${m.load}%</div>
+          <div class="workload-bar"><div class="wb-fill ${m.load<40?'wb-low':m.load<70?'wb-med':'wb-high'}" style="width:${m.load}%"></div></div>
+        </div>
+        <button class="route-btn" style="margin-left:10px">Route Task</button>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Task Routing Rules</div><button class="route-btn">+ Add Rule</button></div>
+      ${[
+        {if:'Email contains "invoice"',route:'James Liu',reason:'finance skill tag'},
+        {if:'Meeting has 3+ attendees',route:'Maria Santos',reason:'lowest workload + comms skills'},
+        {if:'Slack message in #dev',route:'James Liu',reason:'dev skill tag'},
+      ].map(r=>`
+      <div style="padding:12px;background:var(--s2);border-radius:12px;margin-bottom:8px">
+        <div style="font-size:.82rem"><span style="color:var(--t3)">IF</span> <strong>${r.if}</strong></div>
+        <div style="font-size:.82rem;margin-top:4px"><span style="color:var(--t3)">ROUTE TO</span> <strong style="color:var(--teal-l)">${r.route}</strong> <span style="color:var(--t3)">· ${r.reason}</span></div>
+      </div>`).join('')}
+      <div class="card-header" style="margin-top:16px;margin-bottom:8px"><div class="card-title">Skill Match Suggestions</div></div>
+      <div style="background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.15);border-radius:12px;padding:12px;font-size:.83rem;color:var(--t2)">
+        💡 <strong style="color:var(--text)">James Liu</strong> has the lowest workload (25%) and <em>dev + github</em> skills. Best candidate for the <strong>PR review automation</strong>.
+      </div>
+    </div>
+  </div>
+</div>`,
+
+achievements: ()=>`
+<div class="page-content">
+  <div class="page-header">
+    <div><h1>Achievements</h1><div class="page-header-sub">Your productivity milestones and streaks.</div></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="text-align:right"><div style="font-weight:700;font-size:1.1rem;color:var(--teal-l)">2 / 5</div><div style="font-size:.75rem;color:var(--t3)">Earned</div></div>
+      <div style="width:48px;height:48px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-weight:800">🏆</div>
+    </div>
+  </div>
+  <div class="ach-page-grid" id="achGrid"></div>
+</div>`,
+
+onboarding: ()=>`
+<div class="page-content">
+  <div class="page-header">
+    <div><h1>Integrations</h1><div class="page-header-sub">Connect your tools to unlock Elyo's full power.</div></div>
+  </div>
+  <div style="background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.2);border-radius:14px;padding:14px 18px;margin-bottom:20px;font-size:.85rem;color:var(--t2)">
+    💡 <strong style="color:var(--text)">1 of 4</strong> integrations connected. Connect Slack and Notion to enable predictive automation suggestions.
+  </div>
+  <div class="int-grid" id="intGrid"></div>
+</div>`,
+
+settings: ()=>`
+<div class="page-content">
+  <div class="page-header"><h1>Settings</h1></div>
+  <div class="settings-grid">
+    <div class="settings-nav">
+      <a class="active">👤 Profile</a>
+      <a>🕐 Working Hours</a>
+      <a>🧠 Mood Prefs</a>
+      <a>🔔 Notifications</a>
+      <a>🔒 Security</a>
+    </div>
+    <div>
+      <div class="settings-section">
+        <h3>Profile Information</h3>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" value="Alex Kim"/></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="alex@myworkspace.io"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Timezone</label><select class="form-select"><option>UTC+2 Athens</option><option>UTC London</option><option>UTC-5 New York</option></select></div>
+          <div class="form-group"><label class="form-label">Hourly Rate ($)</label><input class="form-input" type="number" value="75"/></div>
+        </div>
+        <button class="save-btn">Save Changes</button>
+      </div>
+      <div class="settings-section">
+        <h3>Notification Preferences</h3>
+        ${[
+          {key:'email',title:'Email Digests',desc:'Weekly summary of automations and savings'},
+          {key:'slack',title:'Slack Notifications',desc:'Real-time alerts when workflows run'},
+          {key:'weekly',title:'Weekly ROI Report',desc:'Automated report every Monday morning'},
+          {key:'mood',title:'Mood Reminder',desc:'Daily check-in reminder at 9am'},
+        ].map(t=>`
+        <div class="toggle-row">
+          <div class="toggle-info"><h4>${t.title}</h4><p>${t.desc}</p></div>
+          <div class="toggle ${toggles[t.key]?'on':''}" onclick="toggles['${t.key}']=!toggles['${t.key}'];this.classList.toggle('on')"></div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>`,
+};
+
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+function moodWidget(){
+  if(moodSaved) return `<div class="mood-widget"><span class="mood-saved">✓ Energy logged — Elyo will adapt your suggestions today.</span><div class="mood-streak">🔥 5-day streak</div></div>`;
+  return `<div class="mood-widget">
+    <span class="mood-label">How's your energy?</span>
+    <div class="mood-emojis">
+      ${['😴','😟','😐','😊','🚀'].map((e,i)=>`<div class="mood-btn ${moodSelected===i+1?'selected':''}" onclick="saveMood(${i+1})">${e}</div>`).join('')}
+    </div>
+    <div class="mood-streak">🔥 5-day streak</div>
+  </div>`;
+}
+function saveMood(score){
+  moodSelected=score; moodSaved=true;
+  showPage('dashboard', document.querySelector('.sb-item.active'));
+}
+function renderMsg(m){
+  const tools = m.tools&&m.tools.length ? `<div>${m.tools.map(t=>`<span class="tool-tag">🔧 ${t}</span>`).join('')}</div>` : '';
+  return `<div class="msg ${m.role}"><div class="m-avatar">${m.role==='ai'?'⚡':'👤'}</div><div class="m-bubble">${m.text}${tools}</div></div>`;
+}
+function agentSend(){
+  const inp = document.getElementById('agentInput');
+  const val = inp.value.trim(); if(!val) return;
+  inp.value='';
+  const msgs = document.getElementById('agentMsgs');
+  chatHistory.push({role:'user',text:val,tools:[]});
+  msgs.innerHTML += renderMsg({role:'user',text:val,tools:[]});
+  msgs.innerHTML += `<div class="msg ai"><div class="m-avatar">⚡</div><div class="m-bubble typing"><span></span><span></span><span></span></div></div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  setTimeout(()=>{
+    const r=chatReplies[chatIdx%chatReplies.length]; chatIdx++;
+    msgs.lastElementChild.remove();
+    const m={role:'ai',text:r.text,tools:r.tools};
+    chatHistory.push(m);
+    msgs.innerHTML+=renderMsg(m);
+    msgs.scrollTop=msgs.scrollHeight;
+  },1100);
+}
+function startNewConv(){ chatHistory=[{role:'ai',text:'New conversation started! What would you like to automate?',tools:[]}]; chatIdx=0; showPage('agent',null); }
+
+// Workflow builder
+function openBuilder(){ document.getElementById('wf-list').style.display='none'; document.getElementById('wf-builder').style.display='block'; initWorkflowBuilder(); }
+function closeBuilder(){ document.getElementById('wf-list').style.display=''; document.getElementById('wf-builder').style.display='none'; }
+function initWorkflowBuilder(){
+  const wrap = document.getElementById('wfWrap'); if(!wrap) return;
+  const nodeTypes=[
+    {type:'trigger',label:'Calendar Event Ended',icon:'⚡',x:20,y:110},
+    {type:'condition',label:'Has Attendees?',icon:'❓',x:170,y:110},
+    {type:'action',label:'Send Email',icon:'📧',x:320,y:60},
+    {type:'action',label:'Create Notion Page',icon:'📝',x:320,y:170},
+    {type:'delay',label:'Wait 5min',icon:'⏱️',x:470,y:60},
+  ];
+  const edges=[{s:0,t:1},{s:1,t:2},{s:1,t:3},{s:2,t:4}];
+  wrap.innerHTML=`
+    <div class="wf-panel-left">
+      <div class="wf-panel-label">Add Nodes</div>
+      <div class="wf-drag-node">⚡ Trigger</div>
+      <div class="wf-drag-node">❓ Condition</div>
+      <div class="wf-drag-node">🎯 Action</div>
+      <div class="wf-drag-node">⏱️ Delay</div>
+      <div class="wf-drag-node">📧 Send Email</div>
+      <div class="wf-drag-node">📝 Create Notion</div>
+      <div class="wf-drag-node">💬 Post Slack</div>
+    </div>
+    <div class="wf-canvas-wrap">
+      <div class="wf-canvas" id="wfCanvasInner">
+        <svg class="wf-svg" id="wfSvg" width="620" height="320"></svg>
+        ${nodeTypes.map((n,i)=>`<div class="wf-node-placed" id="wn${i}" style="left:${n.x}px;top:${n.y}px" onclick="selectWfNode(${i},'${n.type}','${n.label}')"><div class="wf-node-type">${n.icon} ${n.type}</div>${n.label}</div>`).join('')}
+      </div>
+    </div>
+    <div class="wf-panel-right">
+      <div class="inspector-label">Inspector</div>
+      <div id="wfInspector" style="color:var(--t3);font-size:.8rem">Click a node to inspect</div>
+      <button class="sim-run-btn" onclick="runWfSim()">▶ Run Simulation</button>
+    </div>`;
+  // Draw edges
+  setTimeout(()=>{
+    const svg=document.getElementById('wfSvg');
+    const positions=[{x:75,y:128},{x:225,y:128},{x:375,y:85},{x:375,y:195},{x:525,y:85}];
+    edges.forEach(e=>{
+      const s=positions[e.s],t=positions[e.t];
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',`M${s.x},${s.y} C${(s.x+t.x)/2},${s.y} ${(s.x+t.x)/2},${t.y} ${t.x},${t.y}`);
+      path.setAttribute('stroke','#334155');path.setAttribute('stroke-width','2');path.setAttribute('fill','none');
+      svg.appendChild(path);
+    });
+  },50);
+}
+function selectWfNode(i,type,label){
+  document.querySelectorAll('.wf-node-placed').forEach(n=>n.classList.remove('sel'));
+  document.getElementById('wn'+i).classList.add('sel');
+  document.getElementById('wfInspector').innerHTML=`
+    <div style="font-size:.7rem;color:var(--teal);font-weight:700;text-transform:uppercase;margin-bottom:6px">${type}</div>
+    <div style="font-weight:700;margin-bottom:8px">${label}</div>
+    <label class="form-label">Label</label>
+    <input class="inspector-input" value="${label}"/>
+    <label class="form-label" style="margin-top:8px">Description</label>
+    <input class="inspector-input" placeholder="Add description…"/>`;
+}
+function runWfSim(){
+  const min=Math.floor(Math.random()*10)+8;
+  const r=document.getElementById('wfSimResult');
+  r.innerHTML=`<div style="color:var(--teal-l);font-weight:700;margin-bottom:6px">✓ Simulation Complete</div>
+    <div class="sim-row"><span>Steps run</span><span>4 / 4</span></div>
+    <div class="sim-row"><span>Emails drafted</span><span>1</span></div>
+    <div class="sim-row"><span>Notion pages</span><span>1</span></div>
+    <div class="sim-row"><span>⏱ Time saved</span><span style="color:var(--teal-l)">${min} min</span></div>`;
+  r.classList.add('show');
+}
+
+// Analytics charts
+function initCharts(){
+  setTimeout(()=>{
+    const svg=document.getElementById('lineChart'); if(!svg) return;
+    const data=[0.3,0.8,0.5,1.2,0.9,1.4,1.2];
+    const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const W=svg.getBoundingClientRect().width||400,H=130,pad=30;
+    const xStep=(W-pad*2)/(data.length-1);
+    const maxV=Math.max(...data);
+    const pts=data.map((v,i)=>[pad+i*xStep, H-pad-(v/maxV)*(H-pad*2)]);
+    const d='M'+pts.map(p=>p.join(',')).join(' L');
+    const fill=d+` L${pts[pts.length-1][0]},${H-pad} L${pts[0][0]},${H-pad} Z`;
+    svg.innerHTML=`
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#14b8a6" stop-opacity=".3"/><stop offset="100%" stop-color="#14b8a6" stop-opacity="0"/></linearGradient></defs>
+      <path d="${fill}" fill="url(#lg)"/>
+      <path d="${d}" fill="none" stroke="#14b8a6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#14b8a6"/><text x="${p[0]}" y="${H-5}" text-anchor="middle" fill="#64748b" font-size="10">${days[i]}</text><text x="${p[0]}" y="${p[1]-8}" text-anchor="middle" fill="#5eead4" font-size="9">${data[i]}h</text>`).join('')}`;
+  },50);
+}
+
+// Achievements page
+function initAchievements(){
+  const achs=[
+    {key:'first_automation',icon:'🤖',name:'First Automation',desc:'Run your first workflow',progress:1,total:1,earned:true},
+    {key:'one_hour_saved',icon:'⏱️',name:'1 Hour Saved',desc:'Save 60 minutes via automations',progress:60,total:60,earned:true},
+    {key:'streak_3',icon:'🔥',name:'Check-in Streak',desc:'Log mood 3 days in a row',progress:5,total:3,earned:true},
+    {key:'five_workflows',icon:'🏗️',name:'Workflow Architect',desc:'Create 5 workflows',progress:3,total:5,earned:false},
+    {key:'team_player',icon:'🤝',name:'Team Player',desc:'Route a task to a teammate',progress:0,total:1,earned:false},
+    {key:'roi_master',icon:'💰',name:'ROI Master',desc:'Recover $1,000 in value',progress:315,total:1000,earned:false},
+  ];
+  const g=document.getElementById('achGrid'); if(!g) return;
+  g.innerHTML=achs.map(a=>{
+    const pct=Math.min(100,Math.round((a.progress/a.total)*100));
+    return `<div class="ach-big ${a.earned?'earned':''}">
+      <div class="ach-big-icon" style="filter:${a.earned?'none':'grayscale(1) opacity(.4)'}">${a.icon}</div>
+      <div class="ach-big-name">${a.name}</div>
+      <div class="ach-big-desc">${a.desc}</div>
+      <div class="ach-big-bar"><div class="ach-big-fill" style="width:${pct}%"></div></div>
+      <div class="ach-big-pct">${a.earned?'':''+a.progress+' / '+a.total}</div>
+      ${a.earned?'<div class="ach-earned-badge">✓ Earned</div>':''}
+    </div>`;
+  }).join('');
+}
+
+// Integrations page
+function renderIntegrations(){
+  const configs=[
+    {id:'google',icon:'📅',name:'Google',desc:'Calendar, Gmail',color:'#ea4335'},
+    {id:'slack',icon:'💬',name:'Slack',desc:'Messages & channels',color:'#4a154b'},
+    {id:'notion',icon:'📝',name:'Notion',desc:'Pages & databases',color:'#fff'},
+    {id:'teams',icon:'🟦',name:'MS Teams',desc:'Meetings & chats',color:'#6264a7'},
+  ];
+  const g=document.getElementById('intGrid'); if(!g) return;
+  g.innerHTML=configs.map(c=>{
+    const status=integrations[c.id];
+    const statusLabel=status==='connected_mock'?'Connected (Mock)':status==='disconnected'?'Not connected':'Connected';
+    const statusClass=status==='connected_mock'?'mock':status==='disconnected'?'disconnected':'connected';
+    const btnLabel=status==='disconnected'?'Connect':'Disconnect';
+    const btnClass=status==='disconnected'?'pending':'active';
+    return `<div class="int-card">
+      <div class="int-logo" style="background:${c.color}22">${c.icon}</div>
+      <div>
+        <div class="int-name">${c.name}</div>
+        <div class="int-desc">${c.desc}</div>
+        <div class="int-status ${statusClass}">● ${statusLabel}</div>
+      </div>
+      <div class="int-connect-btn">
+        <button class="conn-btn ${btnClass}" onclick="toggleInt('${c.id}',this)">${btnLabel}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleInt(id,btn){
+  if(integrations[id]==='disconnected'){
+    integrations[id]='connected_mock';
+    btn.textContent='Disconnect'; btn.className='conn-btn active';
+    btn.closest('.int-card').querySelector('.int-status').textContent='● Connected (Mock)';
+    btn.closest('.int-card').querySelector('.int-status').className='int-status mock';
+  } else {
+    integrations[id]='disconnected';
+    btn.textContent='Connect'; btn.className='conn-btn pending';
+    btn.closest('.int-card').querySelector('.int-status').textContent='● Not connected';
+    btn.closest('.int-card').querySelector('.int-status').className='int-status disconnected';
+  }
+}
+
+// Patch showPage to run post-render hooks
+const _origShow=showPage;
+window.showPage=function(name,el){
+  _origShow(name,el);
+  if(name==='onboarding') setTimeout(renderIntegrations,50);
+}
+
+// INIT
+showPage('dashboard', document.querySelector('.sb-item.active'));
+</script>
+</body>
+</html>
