@@ -1,5 +1,8 @@
 # Elyo AI – Full-Stack Project Blueprint
 
+https://claude.ai/public/artifacts/42840b75-4d8a-4a8b-b285-59943101c1fc
+
+
 ## Directory Structure
 
 ```
